@@ -99,7 +99,8 @@ convertStringtoInt [a,b,c,d] = [(a, (read b, read d)), (c, (read d, read b))]
 firstEl (a,_) (b,_) = a == b
 groupByFirstEl = groupBy firstEl
 
--- Group by team SITE:
+-- Group by team
+-- SITE: https://stackoverflow.com/questions/12398458/how-to-group-similar-items-in-a-list-using-haskell
 byTeam = foldr fld []
     where
       fld (a,b) [] = [(a,[b])]
