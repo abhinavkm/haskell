@@ -87,67 +87,14 @@ exec2 =
 --   (GA). (If still tied, use alphabetical order of team name.)
 --
 -- status:
---   Completed baseline, implemented enhancement that handles arbitrary team name length
+--   Incomplete.  Presently, it just echos returns the contents of the
+--   'str'.
 --
 ----------------------------------------------------------------
 
 convertStringtoInt:: [String]->[(String, (Integer, Integer))]
 convertStringtoInt [a,b,c,d] = [(a, (read b, read d)), (c, (read d, read b))]
 
--- Group by first element
-firstEl (a,_) (b,_) = a == b
-groupByFirstEl = groupBy firstEl
-
--- Group by team
--- SOURCE: https://stackoverflow.com/questions/12398458/how-to-group-similar-items-in-a-list-using-haskell
-byTeam = foldr fld []
-    where
-      fld (a,b) [] = [(a,[b])]
-      fld (a,b) c@((x,y):xs)  | x == a = (x,b:y):xs
-                           | otherwise = (a,[b]):c
-
--- Create five tuple format
-fiveTuple:: (Integer, Integer) -> (Integer, Integer, Integer, Integer, Integer)
-fiveTuple (a,b) =
-   if a == b then (0,0,1,a,b)
-   else if (a > b) then (1,0,0,a,b)
-   else (0,1,0,a,b)
-
-convertToFive (a,b) = (a, map fiveTuple b)
-
--- Sum all five tuples
-toTuple (a,b) = (a, map sum . transpose $ map toList b)
-toList(a,b,c,d,e) = [a,b,c,d,e]
-
--- Sort table by goal difference
-sortScore ((a, [b, c, d, e, f])) ((g, [h, i, j, k, l]))
-  | (b-c) <= (h-i) = GT
-  | (b-c) >= (h-i) = LT
-sortByRecord = sortBy sortScore
-
--- Print in correct format
-unList:: (String, [Integer]) -> [String]
-unList (a,[b,c,d,e,f]) = [a,show b, show c, show d, show e, show f]
-
-padRight num str = take num (str ++ repeat ' ')
-padLeft num str = reverse (padRight num (reverse str))
-
--- Header for table
-header a = [["Team", "W", "L", "T", "GF", "GA"]] ++
-  [["-----", "-----", "-----", "-----", "-----","-----"]] ++ a
-
--- Format table with correct padding based on team name length
-format:: [[String]] -> [[String]]
-format a = map (padding (findLength ((transpose a) !! 0)  ) ) a
-
-padding:: Int -> [String] -> [String]
-padding num a = map (padLeft num) a
-
--- Enhancement to handle team names of arbitrary length
-findLength:: [String] -> Int
-findLength a = length (maximumBy (comparing length) a)
-
--- Enchancement to check if there are 4 items on a line in input.txt
 findMinLength:: [String] -> Bool
 findMinLength a =
   if length a /= 4 then True
@@ -158,11 +105,11 @@ lengthNotFour a =
   if or (map findMinLength a) then True
   else False
 
-err = "ERROR Wrong number of inputs on a line\n"
+err = "ERROR"
 
 createStandings:: String -> String
 createStandings str =
   if ((lengthNotFour . (map words) . lines) str) then err
-    else (unlines . (map unwords) . format . header . (map unList) .
-  sortByRecord . (map toTuple) . (map convertToFive) . byTeam . concat . groupByFirstEl .
-  sort . concat . (map convertStringtoInt) . (map words) . lines) str
+  else (show . (map words) . lines) str
+
+-- make createstandings an if statement to check on input if scores are negative
