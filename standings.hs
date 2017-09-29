@@ -147,7 +147,7 @@ padding num a = map (padLeft num) a
 findLength:: [String] -> Int
 findLength a = length (maximumBy (comparing length) a)
 
--- Enchancement to check if there are four items on a line in input.txt
+-- Enchancement to check if there are 4 items on a line in input.txt
 findMinLength:: [String] -> Bool
 findMinLength a =
   if length a /= 4 then True
